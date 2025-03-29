@@ -7,8 +7,6 @@ SimpleRPC 是一个**轻量级、高可扩展的 RPC 框架**，旨在帮助开�
 
 如果你想深入理解 RPC 的实现原理，并希望打造一个可以在项目中落地的轻量级解决方案，那么 SimpleRPC 绝对值得一试！ 🚀  
 
-SimpleRPC项目教程：[在线地址](https://www.yuque.com/u39213715/mx5a9f/ybsfoptlo0ecwd7n)
-
 # RPC 框架文档
 
 ## 技术选型
@@ -45,7 +43,7 @@ SimpleRPC项目教程：[在线地址](https://www.yuque.com/u39213715/mx5a9f/yb
 - `rpc-spring-boot-starter`：Spring Boot 注解驱动的 RPC 组件
 
 ## 项目教程大纲
-
+## SimpleRPC项目教程：[在线地址](https://www.yuque.com/u39213715/mx5a9f/ybsfoptlo0ecwd7n)
 ### 第一章：RPC 框架简易版
 
 1. RPC 基本概念和作用
