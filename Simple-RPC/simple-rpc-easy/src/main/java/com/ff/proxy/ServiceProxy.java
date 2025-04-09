@@ -1,6 +1,5 @@
 package com.ff.proxy;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.ff.model.RpcRequest;
