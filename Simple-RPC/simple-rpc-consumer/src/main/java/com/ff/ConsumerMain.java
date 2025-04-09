@@ -2,8 +2,10 @@ package com.ff;
 
 import com.ff.common.model.User;
 import com.ff.common.service.UserService;
+import com.ff.proxy.ServiceProxy;
+import com.ff.proxy.ServiceProxyFactory;
 
-public class Main {
+public class ConsumerMain {
     public static void main(String[] args) {
         // 消费者进行远程调用，调用provider的方法
 
@@ -11,6 +13,7 @@ public class Main {
         user.setUserName("FF");
         user.setAge(18);
         // 调用
+        UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User newUser = userService.getUser(user);
         if (newUser != null) {
             System.out.println("username: " + newUser.getUserName() + ", age: " + newUser.getAge());
