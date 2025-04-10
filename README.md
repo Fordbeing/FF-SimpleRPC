@@ -1,5 +1,7 @@
 # SimpleRPC - 轻量级 RPC 框架  
 
+## 初学者请移步 Simple-Rpc-Easy分支，先了解最基本的 RPC 远程调用：[在线地址]([https://www.yuque.com/u39213715/mx5a9f/ybsfoptlo0ecwd7n](https://github.com/Fordbeing/FF-SimpleRPC/tree/SimpleRPC-Easy))
+
 SimpleRPC 是一个**轻量级、高可扩展的 RPC 框架**，旨在帮助开发者深入理解远程过程调用（RPC）的核心原理，同时提供一个简洁易用的 RPC 解决方案。  
 
 ### 🛠️ 为什么要写这个框架？  
