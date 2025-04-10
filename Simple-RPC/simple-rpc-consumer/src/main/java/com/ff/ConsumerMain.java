@@ -2,7 +2,6 @@ package com.ff;
 
 import com.ff.common.model.User;
 import com.ff.common.service.UserService;
-import com.ff.proxy.ServiceProxy;
 import com.ff.proxy.ServiceProxyFactory;
 
 public class ConsumerMain {
@@ -12,7 +11,7 @@ public class ConsumerMain {
         User user = new User();
         user.setUserName("FF");
         user.setAge(18);
-        // 调用
+        // JDK 代理实现远程调用
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User newUser = userService.getUser(user);
         if (newUser != null) {
