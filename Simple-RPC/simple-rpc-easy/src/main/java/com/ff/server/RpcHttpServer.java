@@ -18,7 +18,7 @@ public class RpcHttpServer {
     // 采用原始的 Http 请求来实现，后续可扩展为 Netty
 
     public static void start(int port) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0); // 创建一个服务器用于监听
         server.createContext("/", new RpcHandler()); // 所有请求都交给 RpcHandler 处理
         server.setExecutor(null); // 单线程
         server.start();
