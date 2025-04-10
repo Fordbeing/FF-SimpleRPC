@@ -1,118 +1,102 @@
-# SimpleRPC - 轻量级 RPC 框架  
+Simple-RPC-Easy 是一个用于给大家了解最简单的 RPC 原理的基础项目，只包含了最基础的远程调用功能，想要进一步了解RPC原理请切入main分支
 
-## 🧑‍💻 初学者请移步学习：
-- GitHub 分支：[`Simple-RPC-Easy`](https://github.com/Fordbeing/FF-SimpleRPC/tree/SimpleRPC-Easy)
-- 在线笔记文档：[点击查看](https://www.yuque.com/u39213715/mx5a9f/hzvu6c5rp6k6x3x2)
-- 请时刻关注在线笔记文档，结合代码高效学习
+小白请从这个项目开始了解原理，代码包含了核心注解，方便大家学习参考
+# 🔌 Simple-RPC-Easy
+
+> 🧠 一个手写轻量级 RPC 框架项目，帮助你从零掌握 RPC 原理  
+> ✨ 目标：让远程调用像本地方法调用一样自然！
+
+---
+
+## 📚 项目介绍
+
+**Simple-RPC-Easy** 是一个简洁清晰的手写 RPC 框架，用最基础的技术实现最核心的远程调用原理。
+
+该项目主要用于教学/自研用途，通过模拟本地调用过程，帮助开发者理解 RPC 的底层机制。
+
+---
+
+## 🚀 项目特点
+
+- ✅ 使用 **JDK 动态代理** 实现服务调用伪装
+- ✅ 使用 **原生 HTTP 服务** 作为通信协议
+- ✅ 使用 **JDK 自带序列化机制**
+- ✅ 使用 **本地 Map 模拟注册中心**
+- ✅ 结构清晰，易于扩展（可对接 Netty、Protobuf、Zookeeper）
+
+---
+
+## 📦 项目结构
+
+```bash
+simple-rpc-easy/
+│
+├── rpc-core/                # RPC 核心模块
+│   ├── proxy/               # 动态代理生成
+│   ├── transport/           # 网络通信（客户端/服务端）
+│   ├── registry/            # 注册中心（本地 Map 实现）
+│   ├── serialization/       # 序列化/反序列化
+│   └── model/               # 请求/响应对象结构
+│
+├── rpc-provider/            # 服务提供方（提供 UserService 实现）
+│   └── ...                  # 启动类 + 接口实现
+│
+├── rpc-consumer/            # 服务消费方（调用远程方法）
+│   └── ...                  # 示例代码
+│
+└── README.md                # 项目说明文档
+
+```
+
+---
+
+## 🧠 核心流程图
+
+Consumer 发起调用
+        ↓
+调用代理对象方法（如 userService.getUser(...)）
+        ↓
+动态代理拦截 → 构造 RpcRequest → 序列化
+        ↓
+通过 HTTP 发送至 Provider
+        ↓
+Provider 接收请求 → 反序列化 → 反射调用目标方法
+        ↓
+执行方法 → 构造 RpcResponse → 序列化返回
+        ↓
+Consumer 接收响应 → 反序列化 → 返回结果
 
 
-## 项目进度（文档在编写某个模块完成之后才会出）
-- 基础框架 SimpleRPC-Easy 分支：[`Simple-RPC-Easy`](https://github.com/Fordbeing/FF-SimpleRPC/tree/SimpleRPC-Easy)
-- 动态配置类版本 ApplicationConfig 分支: [`SimpleRPC-ApplicationConfig`](https://github.com/Fordbeing/FF-SimpleRPC/tree/SimpleRPC-ApplicationConfig)
-- 接入Mock：正在进行ing...
+---
 
-SimpleRPC 是一个**轻量级、高可扩展的 RPC 框架**，旨在帮助开发者深入理解远程过程调用（RPC）的核心原理，同时提供一个简洁易用的 RPC 解决方案。  
+## 🛠️ 技术栈
 
-### 🛠️ 为什么要写这个框架？  
-现有的 RPC 框架（如 gRPC、Dubbo）虽然功能强大，但内部机制相对复杂，难以直接理解其工作原理。**SimpleRPC 旨在从零构建一个简洁的 RPC 框架，帮助开发者深入学习 RPC 的核心概念，如服务注册、序列化、网络通信等关键技术点**。  
+组件	技术栈
+通信层	原生 HTTP
+注册中心	本地 Map 实现
+序列化	JDK 序列化
+动态代理	JDK Proxy
+方法调用	Java 反射
 
-如果你想深入理解 RPC 的实现原理，并希望打造一个可以在项目中落地的轻量级解决方案，那么 SimpleRPC 绝对值得一试！ 🚀  
 
-# RPC 框架文档
+---
 
-## 技术选型
+## 🔧 待优化 / 可扩展方向
+	•	替换为 Netty 实现高性能通信
+	•	引入 Protobuf 序列化提高性能与跨语言能力
+	•	使用 Zookeeper / Nacos 实现注册中心
+	•	加入负载均衡、重试机制、熔断限流等特性
+	•	实现异步调用、超时控制、链路追踪等
 
-### 后端
+---
 
-本 RPC 框架主要基于 **Java** 开发，所有的设计思想可以迁移到其他语言，代码实现有所不同。
+## 📄 License
 
-- ⭐ **Netty** 高性能网络通信框架  
-- ⭐ **Etcd** 云原生注册中心（jetcd 客户端）  
-- ⭐ **SPI 机制**（可扩展组件）  
-- ⭐ **Protobuf** 高效序列化协议  
-- ⭐ **多种设计模式**  
-  - 双检锁单例模式  
-  - 工厂模式  
-  - 代理模式  
-  - 装饰者模式  
-- ⭐ **Spring Boot Starter 开发**  
-- ⭐ **反射和注解驱动**  
-- ⭐ **Guava Retrying** 重试库  
-- ⭐ **JUnit** 单元测试  
-- ⭐ **Logback** 日志库  
-- ⭐ **Hutool、Lombok** 工具库  
+本项目仅用于学习和研究目的，欢迎自由 Fork & 学习！
 
-## 源码目录
+---
 
-- `rpc-core`：RPC 框架核心代码
-- `rpc-easy`：简易版 RPC 框架（适合新手入门）
-- `example-common`：示例代码公用模块
-- `example-consumer`：示例服务消费者
-- `example-provider`：示例服务提供者
-- `example-springboot-consumer`：示例服务消费者（Spring Boot 框架）
-- `example-springboot-provider`：示例服务提供者（Spring Boot 框架）
-- `rpc-spring-boot-starter`：Spring Boot 注解驱动的 RPC 组件
-
-## 项目教程大纲
-## SimpleRPC项目教程：[在线地址](https://www.yuque.com/u39213715/mx5a9f/ybsfoptlo0ecwd7n)
-### 第一章：RPC 框架简易版
-
-1. RPC 基本概念和作用
-2. RPC 框架实现思路 | 基本设计
-3. RPC 框架实现思路 | 扩展设计
-4. 项目初始化
-5. Web 服务器搭建
-6. 本地服务注册
-7. Protobuf 序列化实现
-8. 请求处理器实现
-9. 消费者代理设计
-10. 测试验证
-
-### 第二章：RPC 框架扩展版
-
-#### 配置与序列化
-
-1. 全局配置加载
-2. Protobuf 序列化实现
-3. SPI 机制集成序列化器
-4. 可扩展序列化（SPI + 工厂模式）
-
-#### 注册中心
-
-1. 注册中心核心能力分析
-2. Etcd 介绍与技术选型
-3. 基于 Etcd 实现服务注册与发现
-4. 可扩展注册中心（SPI + 工厂模式）
-5. 心跳检测与服务续期
-6. 服务节点下线机制
-7. 消费端缓存优化（监听 Etcd 变更）
-
-#### 网络通信
-
-1. 自定义 RPC 协议设计（基于 Protobuf）
-2. Netty 服务器端实现
-3. Netty 客户端实现
-4. 编码/解码器设计
-5. 粘包半包问题分析及解决方案
-
-#### 负载均衡与容错
-
-1. 负载均衡策略（随机、轮询、一致性哈希）
-2. SPI 机制扩展负载均衡
-3. 重试机制（等待策略、多种重试策略）
-4. 容错机制（熔断、降级、限流）
-
-#### 框架整合与优化
-
-1. 快速启动类
-2. Spring Boot Starter 组件开发
-3. 注解驱动
-4. 性能优化与监控
-
-## 项目扩展思路
-
-- 增加基于 HTTP/gRPC 的支持
-- 增强服务治理能力（流量控制、熔断降级）
-- 增加安全认证机制（TLS/Token）
-
-**文档后续再出呢**
+## 🙋‍♂️ 作者
+	•	👤 FF
+	•	📝 喜欢钻研底层、构建工具、分享技术
+	•	📬 有问题欢迎交流！
