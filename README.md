@@ -2,7 +2,8 @@
 
 ## 🧑‍💻 初学者请移步学习：
 - GitHub 分支：[`Simple-RPC-Easy`](https://github.com/Fordbeing/FF-SimpleRPC/tree/SimpleRPC-Easy)
-- 在线笔记文档：[点击查看](https://www.yuque.com/u39213715/mx5a9f/ybsfoptlo0ecwd7n)
+- 在线笔记文档：[点击查看](https://www.yuque.com/u39213715/mx5a9f/hzvu6c5rp6k6x3x2)
+- 
 
 SimpleRPC 是一个**轻量级、高可扩展的 RPC 框架**，旨在帮助开发者深入理解远程过程调用（RPC）的核心原理，同时提供一个简洁易用的 RPC 解决方案。  
 
