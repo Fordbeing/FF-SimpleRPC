@@ -9,10 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>simple-rpc-easy</module>
         <module>simple-rpc-common</module>
         <module>simple-rpc-consumer</module>
         <module>simple-rpc-provider</module>
+        <module>simple-rpc-core</module>
     </modules>
 
 
