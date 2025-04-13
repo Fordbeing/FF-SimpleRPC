@@ -9,11 +9,14 @@ import java.io.IOException;
 
 public class ProviderMain {
     public static void main(String[] args) throws IOException {
+
+        RpcApplication.init();
+
         // 注册服务
         LocalRegistry.register(UserService.class.getName(), UserServiceImpl.class);
 
         // 启动 web 服务
-        RpcHttpServer.start(8080); // 启动 RPC 服务端
+        RpcHttpServer.start(RpcApplication.getRpcConfig().getServerPort()); // 启动 RPC 服务端
 
     }
 }

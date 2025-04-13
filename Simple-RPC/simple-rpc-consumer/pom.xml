@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.ff</groupId>
-            <artifactId>simple-rpc-easy</artifactId>
+            <artifactId>simple-rpc-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
