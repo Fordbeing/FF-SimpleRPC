@@ -106,6 +106,7 @@ public class SpiLoader {
                 throw new RuntimeException(errorMsg, e); // 如果实例化失败，抛出异常
             }
         }
+        log.info("序列化类型：{}", implClassName);
         return (T) instanceCache.get(implClassName); // 返回实例
     }
 
