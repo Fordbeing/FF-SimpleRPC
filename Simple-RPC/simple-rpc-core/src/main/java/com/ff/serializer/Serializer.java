@@ -2,7 +2,7 @@ package com.ff.serializer;
 
 import java.io.IOException;
 
-public interface Serialize {
+public interface Serializer {
 
     <T> byte[] serialize(T object) throws IOException;  // 序列化
 

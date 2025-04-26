@@ -1,0 +1,4 @@
+jdk=com.ff.serializer.JdkSerializer
+hessian=com.ff.serializer.HessianSerializer
+json=com.ff.serializer.JsonSerializer
+kryo=com.ff.serializer.KryoSerializer

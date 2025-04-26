@@ -2,10 +2,11 @@ package com.ff.proxy;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import com.ff.RpcApplication;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
-import com.ff.serializer.JdkSerializer;
-import com.ff.serializer.Serialize;
+import com.ff.serializer.Serializer;
+import com.ff.serializer.SerializerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,12 +14,13 @@ import java.lang.reflect.Method;
 
 public class ServiceProxy implements InvocationHandler {
 
+    final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
+
     // 通过 JDK代理 实现方法拦截，JDK 代理只能够拦截实现了接口的类，也就是实现了接口的类就要经过JDK代理
     // invoke 就是拦截之后具体的做法
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        Serialize serialize = new JdkSerializer();
 
         // 构建请求
         RpcRequest request = RpcRequest.builder()
@@ -29,15 +31,18 @@ public class ServiceProxy implements InvocationHandler {
                 .build();
 
         try {
-            byte[] bytes = serialize.serialize(request); // 将请求序列化
+            byte[] bytes = serializer.serialize(request); // 将请求序列化
 
             // 发送请求
-            // 此处采用硬编码，后续可通过配置文件实现动态请求
-            try(HttpResponse httpResponse = HttpRequest.post("http://localhost:8080").body(bytes).execute()) {
+            // 拼接请求地址
+            String serverHost = RpcApplication.getRpcConfig().getServerHost();
+            int serverPort = RpcApplication.getRpcConfig().getServerPort();
+            String url = String.format("http://%s:%d", serverHost, serverPort);
+            try(HttpResponse httpResponse = HttpRequest.post(url).body(bytes).execute()) {
                 byte[] result = httpResponse.bodyBytes();
 
                 // 反序列化
-                RpcResponse rpcResponse = serialize.deserialize(result, RpcResponse.class);
+                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
                 return rpcResponse.getResult();
             }
 
