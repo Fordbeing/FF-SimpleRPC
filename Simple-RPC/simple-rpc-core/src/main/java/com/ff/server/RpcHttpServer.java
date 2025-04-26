@@ -1,10 +1,11 @@
 package com.ff.server;
 
+import com.ff.RpcApplication;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
 import com.ff.registry.LocalRegistry;
-import com.ff.serializer.JdkSerializer;
-import com.ff.serializer.Serialize;
+import com.ff.serializer.Serializer;
+import com.ff.serializer.SerializerFactory;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -27,7 +28,7 @@ public class RpcHttpServer {
 
     static class RpcHandler implements HttpHandler {
 
-        private final Serialize serializer = new JdkSerializer();
+        private final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
