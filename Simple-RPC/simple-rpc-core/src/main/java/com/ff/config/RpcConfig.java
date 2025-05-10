@@ -1,6 +1,7 @@
 package com.ff.config;
 
 import com.ff.serializer.SerializerKeys;
+import com.ff.server.RpcServerModel;
 import lombok.Data;
 
 /*
@@ -38,6 +39,11 @@ public class RpcConfig {
      *
      * */
     private String serializer = SerializerKeys.JDK;
+
+    /*
+     * 网络传输协议,默认为 HTTP
+     */
+    private String RpcServer = RpcServerModel.HTTP;
 
 
 }

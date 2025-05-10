@@ -23,6 +23,21 @@
             <artifactId>simple-rpc-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- Vert.x Core -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>4.5.1</version> <!-- 或与你项目匹配的版本 -->
+        </dependency>
+
+        <!-- Vert.x Web Client -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web-client</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+
     </dependencies>
 
     <properties>

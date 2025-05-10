@@ -1,12 +1,12 @@
 package com.ff.proxy;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import com.ff.RpcApplication;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
 import com.ff.serializer.Serializer;
 import com.ff.serializer.SerializerFactory;
+import com.ff.server.RpcServer;
+import com.ff.server.RpcServerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 public class ServiceProxy implements InvocationHandler {
 
     final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
+    final RpcServer rpcServer = RpcServerFactory.getInstance(RpcApplication.getRpcConfig().getRpcServer());
 
     // 通过 JDK代理 实现方法拦截，JDK 代理只能够拦截实现了接口的类，也就是实现了接口的类就要经过JDK代理
     // invoke 就是拦截之后具体的做法
@@ -38,13 +39,11 @@ public class ServiceProxy implements InvocationHandler {
             String serverHost = RpcApplication.getRpcConfig().getServerHost();
             int serverPort = RpcApplication.getRpcConfig().getServerPort();
             String url = String.format("http://%s:%d", serverHost, serverPort);
-            try(HttpResponse httpResponse = HttpRequest.post(url).body(bytes).execute()) {
-                byte[] result = httpResponse.bodyBytes();
 
-                // 反序列化
-                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
-                return rpcResponse.getResult();
-            }
+            byte[] result = rpcServer.sendPost(url, bytes);
+            // 反序列化
+            RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
+            return rpcResponse.getResult();
 
         }catch (Exception e){
             e.printStackTrace();
