@@ -1,0 +1,3 @@
+http=com.ff.server.RpcHttpServer
+vertx=com.ff.server.VertxHttpServer
+netty=com.ff.server.NettyHttpServer

@@ -4,6 +4,8 @@ import com.ff.common.service.UserService;
 import com.ff.provider.UserServiceImpl;
 import com.ff.registry.LocalRegistry;
 import com.ff.server.RpcHttpServer;
+import com.ff.server.RpcServer;
+import com.ff.server.RpcServerFactory;
 
 import java.io.IOException;
 
@@ -16,7 +18,9 @@ public class ProviderMain {
         LocalRegistry.register(UserService.class.getName(), UserServiceImpl.class);
 
         // 启动 web 服务
-        RpcHttpServer.start(RpcApplication.getRpcConfig().getServerPort()); // 启动 RPC 服务端
+        RpcServer rpcServer = RpcServerFactory.getInstance(RpcApplication.getRpcConfig().getRpcServer());
+
+        rpcServer.start(RpcApplication.getRpcConfig().getServerPort()); // 启动 RPC 服务端
 
     }
 }
