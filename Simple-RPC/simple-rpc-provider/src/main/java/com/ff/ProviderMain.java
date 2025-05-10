@@ -14,7 +14,7 @@ public class ProviderMain {
 
         RpcApplication.init();
 
-        // 注册服务
+        // 注册服务 - > 后续改成注册中心
         LocalRegistry.register(UserService.class.getName(), UserServiceImpl.class);
 
         // 启动 web 服务
