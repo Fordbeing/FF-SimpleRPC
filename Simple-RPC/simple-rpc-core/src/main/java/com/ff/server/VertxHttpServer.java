@@ -1,5 +1,6 @@
 package com.ff.server;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ff.RpcApplication;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
@@ -53,9 +54,22 @@ public class VertxHttpServer implements RpcServer {
                     RpcResponse rpcResponse = new RpcResponse();
 
                     // 通过反射调用本地注册中心中服务实现类的方法 TODO:后面改成从注册中心取
-                    Class<?> implClass = LocalRegistry.get(rpcRequest.getServiceName());
-                    Method method = implClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
-                    Object result = method.invoke(implClass.getDeclaredConstructor().newInstance(), rpcRequest.getParameters());
+//                    Registry registry = RegistryFactory.getInstance(RpcApplication.getRpcConfig().getRegistryConfig().getRegistry());
+//                    List<ServiceMetaInfo> services = registry.getServices(rpcRequest.getServiceName());
+//
+                    Object result = null;
+//                    if(!CollUtil.isEmpty(services)){
+//                        // TODO:这个地方后面要改为负载均衡方案
+//                        ServiceMetaInfo serviceMetaInfo =  services.get(0);
+//                        Class<?> implClass = Class.forName(serviceMetaInfo.toString());
+//                        Method method = implClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+//                        result = method.invoke(implClass.getDeclaredConstructor().newInstance(), rpcRequest.getParameters());
+//                    }
+//                    else {
+                        Class<?> implClass = LocalRegistry.get(rpcRequest.getServiceName());
+                        Method method = implClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+                        result = method.invoke(implClass.getDeclaredConstructor().newInstance(), rpcRequest.getParameters());
+//                    }
 
                     // 设置调用结果
                     rpcResponse.setResult(result);

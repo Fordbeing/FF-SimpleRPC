@@ -57,7 +57,7 @@ public class EtcdRegistry implements Registry {
     public void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException, TimeoutException {
         Lease leaseClient = client.getLeaseClient();
         // 创建一个30秒的租约，用于实现服务临时性，防止宕机后节点长期存在
-        LeaseGrantResponse response = leaseClient.grant(30).get(5, TimeUnit.SECONDS);
+        long leaseId = leaseClient.grant(3000).get().getID();
 
         // 拼接 etcd 中的服务键名 - key
         String registryKey = ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
@@ -67,7 +67,7 @@ public class EtcdRegistry implements Registry {
         ByteSequence value = ByteSequence.from(JSONUtil.toJsonStr(serviceMetaInfo), StandardCharsets.UTF_8);
 
         // 使用租约写入 etcd，使服务注册信息具有过期时间
-        PutOption putOption = PutOption.builder().withLeaseId(response.getID()).build();
+        PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
         kvClient.put(key, value, putOption).get();
     }
 
@@ -79,8 +79,8 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public List<ServiceMetaInfo> getServices(String serviceKey) {
-        // 拼接前缀路径，注意以 '/' 结尾用于前缀匹配
-        String searchPrefix = ETCD_ROOT_PATH + serviceKey;
+        // 拼接前缀路径，注意以 '/' 结尾用于前缀匹配 /rpc/com.ff.common.service.UserService:1.0/localhost:8081
+        String searchPrefix = ETCD_ROOT_PATH + serviceKey + "/";
 
         try {
             // 设置前缀查询选项
