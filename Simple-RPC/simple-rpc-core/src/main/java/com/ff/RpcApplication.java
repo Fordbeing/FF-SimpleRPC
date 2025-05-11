@@ -1,7 +1,10 @@
 package com.ff;
 
+import com.ff.config.RegistryConfig;
 import com.ff.config.RpcConfig;
 import com.ff.constant.RpcConstant;
+import com.ff.registry.Registry;
+import com.ff.registry.RegistryFactory;
 import com.ff.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +24,15 @@ public class RpcApplication {
     public static void init(RpcConfig newRpcConfig) {
         rpcConfig = newRpcConfig;
         log.info("rpc init, config = {}", newRpcConfig.toString());
+
+        // 注册中心初始化
+        // 获取默认的注册中心配置
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        // 返回注册中心实例
+        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        registry.init(registryConfig);
+        log.info("rpc init, registryConfig = {}", registryConfig);
+
     }
 
     // 方法二

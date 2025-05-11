@@ -48,7 +48,7 @@ public class VertxHttpServer implements RpcServer {
 
                     RpcResponse rpcResponse = new RpcResponse();
 
-                    // 通过反射调用本地注册中心中服务实现类的方法
+                    // 通过反射调用本地注册中心中服务实现类的方法 TODO:后面改成从注册中心取
                     Class<?> implClass = LocalRegistry.get(rpcRequest.getServiceName());
                     Method method = implClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
                     Object result = method.invoke(implClass.getDeclaredConstructor().newInstance(), rpcRequest.getParameters());

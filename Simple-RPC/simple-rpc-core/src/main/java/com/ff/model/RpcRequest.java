@@ -1,5 +1,6 @@
 package com.ff.model;
 
+import com.ff.constant.RpcConstant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class RpcRequest implements Serializable {
     private String methodName;              // 方法名
     private Class<?>[] parameterTypes;      // 方法参数类型
     private Object[] parameters;            // 方法参数值
+    private String serviceVersion = RpcConstant.DEFAULT_SERVICE_VERSION;    // 服务版本
 }
