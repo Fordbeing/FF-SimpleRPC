@@ -45,5 +45,10 @@ public class RpcConfig {
      */
     private String RpcServer = RpcServerModel.HTTP;
 
+    /*
+     * 注册中心配置
+     */
+    private RegistryConfig registryConfig = new RegistryConfig();
+
 
 }

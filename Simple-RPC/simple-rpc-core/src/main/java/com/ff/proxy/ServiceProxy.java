@@ -1,17 +1,26 @@
 package com.ff.proxy;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.ff.RpcApplication;
+import com.ff.config.RpcConfig;
+import com.ff.constant.RpcConstant;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
+import com.ff.model.ServiceMetaInfo;
+import com.ff.registry.Registry;
+import com.ff.registry.RegistryFactory;
 import com.ff.serializer.Serializer;
 import com.ff.serializer.SerializerFactory;
 import com.ff.server.RpcServer;
 import com.ff.server.RpcServerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.List;
 
-
+@Slf4j
 public class ServiceProxy implements InvocationHandler {
 
     final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
@@ -34,13 +43,29 @@ public class ServiceProxy implements InvocationHandler {
         try {
             byte[] bytes = serializer.serialize(request); // 将请求序列化
 
+            RpcConfig rpcConfig = RpcApplication.getRpcConfig();
+            Registry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistry());
+
+            ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
+            serviceMetaInfo.setServiceName(method.getDeclaringClass().getName());
+            serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
+            List<ServiceMetaInfo> services = registry.getServices(serviceMetaInfo.getServiceKey());
+            if(CollUtil.isEmpty(services)){
+                log.info("注册中心：{}，无法找到key：{} 的服务地址", method.getDeclaringClass().getName(), serviceMetaInfo.getServiceKey());
+                throw new RuntimeException("暂无服务地址");
+            }
+
+            // 暂时取第一个
+            ServiceMetaInfo serviceMetaInfoFirst = services.get(0);
+
+
             // 发送请求
             // 拼接请求地址
-            String serverHost = RpcApplication.getRpcConfig().getServerHost();
-            int serverPort = RpcApplication.getRpcConfig().getServerPort();
-            String url = String.format("http://%s:%d", serverHost, serverPort);
+//            String serverHost = RpcApplication.getRpcConfig().getServerHost();
+//            int serverPort = RpcApplication.getRpcConfig().getServerPort();
+//            String url = String.format("http://%s:%d", serverHost, serverPort);
 
-            byte[] result = rpcServer.sendPost(url, bytes);
+            byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
             // 反序列化
             RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
             return rpcResponse.getResult();
