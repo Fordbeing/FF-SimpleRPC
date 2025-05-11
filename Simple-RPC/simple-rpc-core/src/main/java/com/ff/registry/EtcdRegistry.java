@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.ff.config.RegistryConfig;
 import com.ff.model.ServiceMetaInfo;
 import io.etcd.jetcd.*;
+import io.etcd.jetcd.lease.LeaseGrantResponse;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -51,10 +54,10 @@ public class EtcdRegistry implements Registry {
      * @param serviceMetaInfo 服务的元信息
      */
     @Override
-    public void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException {
+    public void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException, TimeoutException {
         Lease leaseClient = client.getLeaseClient();
         // 创建一个30秒的租约，用于实现服务临时性，防止宕机后节点长期存在
-        long leaseId = leaseClient.grant(30).get().getID();
+        LeaseGrantResponse response = leaseClient.grant(30).get(5, TimeUnit.SECONDS);
 
         // 拼接 etcd 中的服务键名 - key
         String registryKey = ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
@@ -64,7 +67,7 @@ public class EtcdRegistry implements Registry {
         ByteSequence value = ByteSequence.from(JSONUtil.toJsonStr(serviceMetaInfo), StandardCharsets.UTF_8);
 
         // 使用租约写入 etcd，使服务注册信息具有过期时间
-        PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
+        PutOption putOption = PutOption.builder().withLeaseId(response.getID()).build();
         kvClient.put(key, value, putOption).get();
     }
 

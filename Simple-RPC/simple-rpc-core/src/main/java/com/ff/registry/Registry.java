@@ -5,6 +5,7 @@ import com.ff.model.ServiceMetaInfo;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 注册中心接口，用于服务的注册、发现和管理
@@ -22,7 +23,7 @@ public interface Registry {
      * @param serviceMetaInfo 服务元数据信息，包括服务名称、地址、端口等
      * 该方法用于将服务提供者的信息注册到注册中心，供消费者发现
      */
-    void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException;
+    void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException, TimeoutException;
 
     /**
      * 服务发现（客户端）
