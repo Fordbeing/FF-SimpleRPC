@@ -58,13 +58,7 @@ public class ServiceProxy implements InvocationHandler {
             // 暂时取第一个
             ServiceMetaInfo serviceMetaInfoFirst = services.get(0);
 
-
-            // 发送请求
-            // 拼接请求地址
-//            String serverHost = RpcApplication.getRpcConfig().getServerHost();
-//            int serverPort = RpcApplication.getRpcConfig().getServerPort();
-//            String url = String.format("http://%s:%d", serverHost, serverPort);
-
+            // 发送请求 serviceMetaInfoFirst.getServiceAddress() -> URL
             byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
             // 反序列化
             RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
