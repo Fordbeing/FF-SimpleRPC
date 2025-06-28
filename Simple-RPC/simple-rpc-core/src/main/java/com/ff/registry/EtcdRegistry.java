@@ -1,5 +1,9 @@
 package com.ff.registry;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
+import cn.hutool.cron.CronUtil;
+import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
 import com.ff.config.RegistryConfig;
 import com.ff.model.ServiceMetaInfo;
@@ -7,11 +11,14 @@ import io.etcd.jetcd.*;
 import io.etcd.jetcd.lease.LeaseGrantResponse;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.watch.WatchEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -22,6 +29,22 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class EtcdRegistry implements Registry {
+
+    /**
+     * 本机注册的节点 key 集合（用于维护续期）
+     */
+    private final Set<String> localRegistryNodeKeySet = new HashSet<>();
+
+    /**
+     * 注册中心服务缓存
+     */
+    private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
+
+    /**
+     * 正在监听的key集合
+     */
+    private final Set<String> watchingRegistryNodeKeySet = new ConcurrentHashSet<>();
+
 
     // etcd 客户端
     private Client client;
@@ -41,11 +64,18 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public void init(RegistryConfig registryConfig) {
-        client = Client.builder()
-                .endpoints(registryConfig.getAddress()) // 设置 etcd 地址
-                .connectTimeout(Duration.ofMillis(registryConfig.getTimeout())) // 设置连接超时
-                .build();
-        kvClient = client.getKVClient(); // 获取 KV 操作客户端
+        try {
+            client = Client.builder()
+                    .endpoints(registryConfig.getAddress()) // 设置 etcd 地址
+                    .connectTimeout(Duration.ofMillis(registryConfig.getTimeout())) // 设置连接超时
+                    .build();
+            kvClient = client.getKVClient(); // 获取 KV 操作客户端
+            // 自动续约，心跳检测
+            heartbeat();
+        } catch (Exception e) {
+            log.error("init etcd client error", e);
+            throw new RuntimeException("init etcd client error", e);
+        }
     }
 
     /**
@@ -69,6 +99,9 @@ public class EtcdRegistry implements Registry {
         // 使用租约写入 etcd，使服务注册信息具有过期时间
         PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
         kvClient.put(key, value, putOption).get();
+
+        // 注册成功之后,需要将当前节点信息写入本地
+        localRegistryNodeKeySet.add(registryKey);
     }
 
     /**
@@ -79,6 +112,12 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public List<ServiceMetaInfo> getServices(String serviceKey) {
+        // 如果缓存里面有，直接返回
+        List<ServiceMetaInfo> serviceMetaInfos = registryServiceCache.readCache();
+        if (CollUtil.isNotEmpty(serviceMetaInfos)) {
+            return serviceMetaInfos;
+        }
+
         // 拼接前缀路径，注意以 '/' 结尾用于前缀匹配 /rpc/com.ff.common.service.UserService:1.0/localhost:8081
         String searchPrefix = ETCD_ROOT_PATH + serviceKey + "/";
 
@@ -94,6 +133,8 @@ public class EtcdRegistry implements Registry {
             // 将查询结果反序列化为服务信息对象
             return keyValues.stream()
                     .map(keyValue -> {
+                        String key = keyValue.getKey().toString(StandardCharsets.UTF_8);
+                        watch(key);
                         String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
                         return JSONUtil.toBean(value, ServiceMetaInfo.class);
                     })
@@ -110,9 +151,11 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public void unRegistry(ServiceMetaInfo serviceMetaInfo) {
+        String registryKey = ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
         kvClient.delete(ByteSequence.from(
-                ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey(),
+                registryKey,
                 StandardCharsets.UTF_8));
+        localRegistryNodeKeySet.remove(registryKey);
     }
 
     /**
@@ -120,12 +163,83 @@ public class EtcdRegistry implements Registry {
      */
     @Override
     public void destroy() {
-        log.info("注册中心销毁！");
+        log.error("注册中心销毁！");
+
+        for (String key : localRegistryNodeKeySet) {
+            try {
+                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                log.error("{} 节点下线失败！", key, e);
+                throw new RuntimeException(key + " 节点下线失败！");
+
+            }
+        }
+
         if (kvClient != null) {
             kvClient.close(); // 关闭 KV 客户端
         }
         if (client != null) {
             client.close(); // 关闭 etcd 客户端
+        }
+    }
+
+    @Override
+    public void heartbeat() {
+        // 定制续期时间 10秒
+        CronUtil.schedule("*/10 * * * * *", new Task() {
+            @Override
+            public void execute() {
+                for (String registryKey : localRegistryNodeKeySet) {
+                    try {
+                        List<KeyValue> keyValues = kvClient.get(ByteSequence.from(registryKey, StandardCharsets.UTF_8))
+                                .get().getKvs();
+                        if (CollUtil.isEmpty(keyValues)) {
+                            Thread.sleep(5000);
+                            // 进行重试
+                            keyValues = kvClient.get(ByteSequence.from(registryKey, StandardCharsets.UTF_8))
+                                    .get().getKvs();
+                            if (CollUtil.isEmpty(keyValues)) {
+                                log.error(registryKey + " 节点已过期！重启节点才能重新注册！");
+                                continue;
+                            }
+                        }
+                        String value = keyValues.get(0).getValue().toString(StandardCharsets.UTF_8);
+                        ServiceMetaInfo serviceMetaInfo = JSONUtil.toBean(value, ServiceMetaInfo.class);
+                        // 进行续约
+                        registry(serviceMetaInfo);
+                    } catch (Exception e) {
+                        localRegistryNodeKeySet.remove(registryKey);
+                        log.error("续签失败，key:{}", registryKey, e);
+                    }
+                }
+            }
+        });
+
+        // 秒级续约
+        CronUtil.setMatchSecond(true);
+        CronUtil.start();
+    }
+
+    @Override
+    public void watch(String serviceNodeKey) {
+        Watch watchClient = client.getWatchClient();
+        // 之前没有被监听，开启监听
+        boolean newWatch = watchingRegistryNodeKeySet.add(serviceNodeKey);
+        if (newWatch) {
+            watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), watchResponse -> {
+                // key 删除时触发
+                for (WatchEvent event : watchResponse.getEvents()) {
+                    switch (event.getEventType()) {
+                        case DELETE:
+                            // 清空缓存
+                            registryServiceCache.clearCache();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+            });
         }
     }
 }
