@@ -2,9 +2,7 @@ package com.ff;
 
 import com.ff.common.model.User;
 import com.ff.common.service.UserService;
-import com.ff.config.RpcConfig;
 import com.ff.proxy.ServiceProxyFactory;
-import com.ff.utils.ConfigUtils;
 
 public class ConsumerMain {
     public static void main(String[] args) {

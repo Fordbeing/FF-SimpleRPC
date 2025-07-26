@@ -5,8 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalRegistry {
 
-    // 使用 Map 存储，后续扩展为 Etcd
-    // 服务注册存储
+    // 服务注册存储， 本地存储实现类， consumer 和 provider 都能使用
     public static final Map<String, Class<?>> map = new ConcurrentHashMap<>();
 
     // 服务注册

@@ -1,7 +1,6 @@
 package com.ff.proxy;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.ff.RpcApplication;
 import com.ff.config.RpcConfig;
 import com.ff.constant.RpcConstant;
@@ -34,10 +33,10 @@ public class ServiceProxy implements InvocationHandler {
 
         // 构建请求
         RpcRequest request = RpcRequest.builder()
-                .serviceName(method.getDeclaringClass().getName())
-                .methodName(method.getName())
-                .parameters(args)
-                .parameterTypes(method.getParameterTypes())
+                .serviceName(method.getDeclaringClass().getName()) // 接口名称
+                .methodName(method.getName()) // 方法名
+                .parameterTypes(method.getParameterTypes())  // 方法参数类型
+                .parameters(args) // 参数
                 .build();
 
         try {
@@ -54,9 +53,9 @@ public class ServiceProxy implements InvocationHandler {
                 log.info("注册中心：{}，无法找到key：{} 的服务地址", method.getDeclaringClass().getName(), serviceMetaInfo.getServiceKey());
                 throw new RuntimeException("暂无服务地址");
             }
-
+            // TODO:后续再添加负载均衡
             // 暂时取第一个
-            ServiceMetaInfo serviceMetaInfoFirst = services.get(0);
+            ServiceMetaInfo serviceMetaInfoFirst = services.getFirst();
 
             // 发送请求 serviceMetaInfoFirst.getServiceAddress() -> URL
             byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
