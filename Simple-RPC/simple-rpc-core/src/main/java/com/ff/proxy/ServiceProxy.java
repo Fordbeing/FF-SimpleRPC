@@ -26,7 +26,7 @@ public class ServiceProxy implements InvocationHandler {
     final RpcServer rpcServer = RpcServerFactory.getInstance(RpcApplication.getRpcConfig().getRpcServer());
 
     // 通过 JDK代理 实现方法拦截，JDK 代理只能够拦截实现了接口的类，也就是实现了接口的类就要经过JDK代理
-    // invoke 就是拦截之后具体的做法
+    // invoke 就是拦截之后具体的做法， 拦截之后就会把调用的接口、方法、类型参数、参数值给传过来，刚好符合我们的需求
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
