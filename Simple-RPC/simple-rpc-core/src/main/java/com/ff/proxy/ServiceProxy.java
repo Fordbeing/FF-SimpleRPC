@@ -13,6 +13,7 @@ import com.ff.serializer.Serializer;
 import com.ff.serializer.SerializerFactory;
 import com.ff.server.RpcServer;
 import com.ff.server.RpcServerFactory;
+import com.ff.server.tcp.VertxTcpClient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
@@ -58,9 +59,11 @@ public class ServiceProxy implements InvocationHandler {
             ServiceMetaInfo serviceMetaInfoFirst = services.getFirst();
 
             // 发送请求 serviceMetaInfoFirst.getServiceAddress() -> URL
-            byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
+            // 取消其他的服务器发送功能
+//            byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
+
             // 反序列化
-            RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
+            RpcResponse rpcResponse = VertxTcpClient.sendPost(request, serviceMetaInfoFirst);
             return rpcResponse.getResult();
 
         }catch (Exception e){

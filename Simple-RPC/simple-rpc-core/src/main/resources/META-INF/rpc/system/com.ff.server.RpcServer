@@ -1,3 +1,3 @@
 http=com.ff.server.RpcHttpServer
-vertx=com.ff.server.VertxHttpServer
+vertx=com.ff.server.tcp.VertxTcpServer;
 netty=com.ff.server.NettyHttpServer

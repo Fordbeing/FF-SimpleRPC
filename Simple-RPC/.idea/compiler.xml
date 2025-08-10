@@ -7,14 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="simple-rpc-core" />
+        <module name="simple-rpc-provider" />
+        <module name="simple-rpc-common" />
+        <module name="simple-rpc-consumer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Simple-RPC" target="17" />
-      <module name="simple-rpc-common" target="17" />
-      <module name="simple-rpc-consumer" target="17" />
       <module name="simple-rpc-easy" target="17" />
-      <module name="simple-rpc-provider" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

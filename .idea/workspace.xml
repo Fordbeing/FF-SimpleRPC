@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39f96af0-1c8f-4e41-802b-7314bc08d183" name="Changes" comment="Update README.md">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simple-RPC/simple-rpc-consumer/src/main/java/com/ff/ConsumerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/Simple-RPC/simple-rpc-consumer/src/main/java/com/ff/ConsumerMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simple-RPC/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/Simple-RPC/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simple-RPC/simple-rpc-core/src/main/java/com/ff/registry/LocalRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/Simple-RPC/simple-rpc-core/src/main/java/com/ff/registry/LocalRegistry.java" afterDir="false" />
-    </list>
+    <list default="true" id="39f96af0-1c8f-4e41-802b-7314bc08d183" name="Changes" comment="Update README.md" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,6 +35,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -107,6 +103,7 @@
       <workItem from="1751091009504" duration="584000" />
       <workItem from="1752500555360" duration="228000" />
       <workItem from="1753491705644" duration="2970000" />
+      <workItem from="1753581447223" duration="23000" />
     </task>
     <task id="LOCAL-00001" summary="commit Simple-RPC-Easy module">
       <option name="closed" value="true" />

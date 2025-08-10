@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="commit simple-easy module" />
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolConstant.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageEncoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageSerializerEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageStatusEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageTypeEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/TcpBufferHandlerWrapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/TcpServerHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/test/java/com/ff/ProtocolMessageTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.server.RpcServer" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.server.RpcServer" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +34,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -21,18 +42,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Fordbeing"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Fordbeing&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:Fordbeing/FF-SimpleRPC.git",
-    "accountId": "62105f4a-4cc0-4dd5-9bb6-2e7df38957c2"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:Fordbeing/FF-SimpleRPC.git&quot;,
+    &quot;accountId&quot;: &quot;62105f4a-4cc0-4dd5-9bb6-2e7df38957c2&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -50,12 +71,13 @@
     "Application.Main (1).executor": "Run",
     "Application.Main.executor": "Debug",
     "Application.ProviderMain.executor": "Run",
+    "JUnit.ProtocolMessageTest.testEncodeAndDecode.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "SimpleRPC-Easy",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/wrf/Desktop/SimpleRPC/FF-SimpleRPC/Simple-RPC",
+    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -64,7 +86,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.ConsumerMain">
+  <component name="RunManager" selected="JUnit.ProtocolMessageTest.testEncodeAndDecode">
     <configuration name="ConsumerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ff.ConsumerMain" />
       <module name="simple-rpc-consumer" />
@@ -117,20 +139,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ProtocolMessageTest.testEncodeAndDecode" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="simple-rpc-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ff.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ff" />
+      <option name="MAIN_CLASS_NAME" value="com.ff.ProtocolMessageTest" />
+      <option name="METHOD_NAME" value="testEncodeAndDecode" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ConsumerMain" />
-        <item itemvalue="Application.ProviderMain" />
-        <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Main (1)" />
+        <item itemvalue="JUnit.ProtocolMessageTest.testEncodeAndDecode" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.21565.193" />
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-IU-243.21565.193" />
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
       </set>
     </attachedChunks>
   </component>
@@ -144,6 +179,8 @@
       <updated>1744118787552</updated>
       <workItem from="1744118788611" duration="2779000" />
       <workItem from="1744198674607" duration="18761000" />
+      <workItem from="1753581471857" duration="3408000" />
+      <workItem from="1754568124695" duration="42722000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -169,7 +206,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744296654791</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="修改注释，更新文档">
+      <option name="closed" value="true" />
+      <created>1754748377737</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1754748377737</updated>
+    </task>
+    <task id="LOCAL-00005" summary="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存">
+      <option name="closed" value="true" />
+      <created>1754808714896</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1754808714896</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,6 +230,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit simple-easy module" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit simple-easy module" />
+    <MESSAGE value="修改注释，更新文档" />
+    <MESSAGE value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
   </component>
 </project>
