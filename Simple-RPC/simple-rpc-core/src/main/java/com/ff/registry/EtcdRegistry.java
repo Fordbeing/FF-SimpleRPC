@@ -113,7 +113,7 @@ public class EtcdRegistry implements Registry {
     @Override
     public List<ServiceMetaInfo> getServices(String serviceKey) {
         // 如果缓存里面有，直接返回
-        List<ServiceMetaInfo> serviceMetaInfos = registryServiceCache.readCache();
+        List<ServiceMetaInfo> serviceMetaInfos = registryServiceCache.readCache(serviceKey);
         if (CollUtil.isNotEmpty(serviceMetaInfos)) {
             return serviceMetaInfos;
         }
@@ -131,7 +131,7 @@ public class EtcdRegistry implements Registry {
                     .getKvs();
 
             // 将查询结果反序列化为服务信息对象
-            return keyValues.stream()
+            List<ServiceMetaInfo> serviceMetaInfoList = keyValues.stream()
                     .map(keyValue -> {
                         String key = keyValue.getKey().toString(StandardCharsets.UTF_8);
                         watch(key);
@@ -139,6 +139,9 @@ public class EtcdRegistry implements Registry {
                         return JSONUtil.toBean(value, ServiceMetaInfo.class);
                     })
                     .collect(Collectors.toList());
+            // 写入注册中心本地缓存
+            registryServiceCache.writeCache(serviceKey, serviceMetaInfoList);
+            return serviceMetaInfoList;
         } catch (Exception e) {
             throw new RuntimeException("获取服务列表失败", e);
         }
@@ -232,7 +235,7 @@ public class EtcdRegistry implements Registry {
                     switch (event.getEventType()) {
                         case DELETE:
                             // 清空缓存
-                            registryServiceCache.clearCache();
+                            registryServiceCache.clearCacheByKey(serviceNodeKey);
                             break;
                         case PUT:
                         default:
