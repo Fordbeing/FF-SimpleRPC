@@ -1,0 +1,3 @@
+roundRobin=com.ff.loadbalancer.RoundRobinLoadBalancer
+random=com.ff.loadbalancer.RandomLoadBalancer
+consistentHash=com.ff.loadbalancer.ConsistentHashLoadBalancer

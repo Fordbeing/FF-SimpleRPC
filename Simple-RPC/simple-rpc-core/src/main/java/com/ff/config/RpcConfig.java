@@ -1,5 +1,6 @@
 package com.ff.config;
 
+import com.ff.loadbalancer.LoadBalancerKeys;
 import com.ff.serializer.SerializerKeys;
 import com.ff.server.RpcServerModel;
 import lombok.Data;
@@ -49,6 +50,9 @@ public class RpcConfig {
      * 注册中心配置
      */
     private RegistryConfig registryConfig = new RegistryConfig();
+
+    // 负载均衡配置
+    private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
 
 
 }

@@ -4,26 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolConstant.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageDecoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageEncoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageSerializerEnum.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageStatusEnum.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/protocol/ProtocolMessageTypeEnum.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/TcpBufferHandlerWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/TcpServerHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/test/java/com/ff/ProtocolMessageTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等">
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/ConsistentHashLoadBalancer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancerFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancerKeys.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/RandomLoadBalancer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/RoundRobinLoadBalancer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/custom/com.ff.loadbalancer.LoadBalancer" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.loadbalancer.LoadBalancer" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.server.RpcServer" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.server.RpcServer" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +25,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -77,7 +69,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC",
+    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC/simple-rpc-core/src/main/resources/META-INF/rpc/custom",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -86,6 +78,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\IDEAProgram\FF-SimpleRPC\FF-SimpleRPC\Simple-RPC\simple-rpc-core\src\main\resources\META-INF\rpc\custom" />
+    </key>
+  </component>
   <component name="RunManager" selected="JUnit.ProtocolMessageTest.testEncodeAndDecode">
     <configuration name="ConsumerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ff.ConsumerMain" />
@@ -180,7 +177,7 @@
       <workItem from="1744118788611" duration="2779000" />
       <workItem from="1744198674607" duration="18761000" />
       <workItem from="1753581471857" duration="3408000" />
-      <workItem from="1754568124695" duration="42722000" />
+      <workItem from="1754568124695" duration="58447000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -222,7 +219,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754808714896</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等">
+      <option name="closed" value="true" />
+      <created>1754834777270</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1754834777270</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -232,6 +237,7 @@
     <MESSAGE value="commit simple-easy module" />
     <MESSAGE value="修改注释，更新文档" />
     <MESSAGE value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
+    <MESSAGE value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
+    <option name="LAST_COMMIT_MESSAGE" value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
   </component>
 </project>

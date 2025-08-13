@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import com.ff.RpcApplication;
 import com.ff.config.RpcConfig;
 import com.ff.constant.RpcConstant;
+import com.ff.loadbalancer.LoadBalancer;
+import com.ff.loadbalancer.LoadBalancerFactory;
 import com.ff.model.RpcRequest;
 import com.ff.model.RpcResponse;
 import com.ff.model.ServiceMetaInfo;
@@ -18,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class ServiceProxy implements InvocationHandler {
@@ -54,16 +58,18 @@ public class ServiceProxy implements InvocationHandler {
                 log.info("注册中心：{}，无法找到key：{} 的服务地址", method.getDeclaringClass().getName(), serviceMetaInfo.getServiceKey());
                 throw new RuntimeException("暂无服务地址");
             }
-            // TODO:后续再添加负载均衡
-            // 暂时取第一个
-            ServiceMetaInfo serviceMetaInfoFirst = services.getFirst();
+            // 负载均衡算法
+            LoadBalancer instance = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("methodName", request.getMethodName());
+            ServiceMetaInfo serviceMetaInfoLoadBalancer = instance.select(requestParams, services);
 
             // 发送请求 serviceMetaInfoFirst.getServiceAddress() -> URL
-            // 取消其他的服务器发送功能
+            // 取消其他的服务器发送功能-暂时只能通过Vert.x进行发送
 //            byte[] result = rpcServer.sendPost(serviceMetaInfoFirst.getServiceAddress(), bytes);
 
             // 反序列化
-            RpcResponse rpcResponse = VertxTcpClient.sendPost(request, serviceMetaInfoFirst);
+            RpcResponse rpcResponse = VertxTcpClient.sendPost(request, serviceMetaInfoLoadBalancer);
             return rpcResponse.getResult();
 
         }catch (Exception e){
