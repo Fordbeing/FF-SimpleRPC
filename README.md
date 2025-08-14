@@ -1,104 +1,169 @@
-该分支将硬编码配置改成了动态读取配置文件的方式
-在线笔记文档：[点击查看](https://www.yuque.com/u39213715/mx5a9f/hzvu6c5rp6k6x3x2)
-Simple-RPC-Easy 是一个用于给大家了解最简单的 RPC 原理的基础项目，只包含了最基础的远程调用功能，想要进一步了解RPC原理请切入main分支
+我帮你整理成适合 GitHub README 风格的版本，保持你原有的技术细节和个人想法，但让排版、结构和 Markdown 语法更清晰，也更方便别人快速浏览。
 
-小白请从这个项目开始了解原理，代码包含了核心注解，方便大家学习参考
-# 🔌 Simple-RPC-Easy
+⸻
 
-> 🧠 一个手写轻量级 RPC 框架项目，帮助你从零掌握 RPC 原理  
-> ✨ 目标：让远程调用像本地方法调用一样自然！
+⚡ Simple-RPC-Easy (High Performance Edition)
 
----
+不仅仅是能用的 RPC，更是能调、能扩、能折腾的 RPC
+一个从零开始构建的可扩展高性能 RPC 框架
 
-## 📚 项目介绍
+这是我从零写的 RPC 框架。
+一开始只是想验证想法，结果越做越多：
+多序列化、多网络实现、可插拔负载均衡、可选注册中心、SPI 扩展机制……
+到现在已经是一个“能跑上生产”的雏形。
 
-**Simple-RPC-Easy** 是一个简洁清晰的手写 RPC 框架，用最基础的技术实现最核心的远程调用原理。
+为了避免**“写死在代码里，三个月后自己都嫌弃”**的情况，我在设计时刻意保留了大量可扩展接口，让它有足够的生命力和可玩空间。
 
-该项目主要用于教学/自研用途，通过模拟本地调用过程，帮助开发者理解 RPC 的底层机制。
+⸻
 
----
+🚀 核心特性
 
-## 🚀 项目特点
+1. 全局配置（Global Configuration）
 
-- ✅ 使用 **JDK 动态代理** 实现服务调用伪装
-- ✅ 使用 **原生 HTTP 服务** 作为通信协议
-- ✅ 使用 **JDK 自带序列化机制**
-- ✅ 使用 **本地 Map 模拟注册中心**
-- ✅ 结构清晰，易于扩展（可对接 Netty、Protobuf、Zookeeper）
+为什么要做？
+最初的 Demo 中，所有参数都是硬编码的，比如：
 
----
+new ZookeeperRegistry("127.0.0.1:2181");
 
-## 📦 项目结构
+两周后想换成 Etcd，要改的地方比想象中多。于是我做了统一配置中心，让一行改动全局生效。
 
-```bash
-simple-rpc-easy/
-│
-├── rpc-core/                # RPC 核心模块
-│   ├── proxy/               # 动态代理生成
-│   ├── transport/           # 网络通信（客户端/服务端）
-│   ├── registry/            # 注册中心（本地 Map 实现）
-│   ├── serialization/       # 序列化/反序列化
-│   └── model/               # 请求/响应对象结构
-│
-├── rpc-provider/            # 服务提供方（提供 UserService 实现）
-│   └── ...                  # 启动类 + 接口实现
-│
-├── rpc-consumer/            # 服务消费方（调用远程方法）
-│   └── ...                  # 示例代码
-│
-└── README.md                # 项目说明文档
+设计原则：
+	•	配置集中化：统一入口，方便维护
+	•	优先级：环境变量 > 配置文件 > 框架默认值（方便本地调试 + 生产覆盖）
+	•	支持热更新：动态调整负载均衡、序列化方式等，无需重启
 
-```
+示例配置：
 
----
+rpc:
+  serializer: kryo
+  transport:
+    type: netty
+    requestTimeoutMs: 500
+  loadBalance:
+    strategy: consistent_hash
+  registry:
+    type: zookeeper
+    address: 127.0.0.1:2181
 
-## 🧠 核心流程图
+💡 个人想法
+全局配置不只是“把硬编码挪到 yml”，它应该有优先级、有默认值、有热加载。这样调试、灰度、线上应急都能快速调整。
 
-Consumer 发起调用
-        ↓
-调用代理对象方法（如 userService.getUser(...)）
-        ↓
-动态代理拦截 → 构造 RpcRequest → 序列化
-        ↓
-通过 HTTP 发送至 Provider
-        ↓
-Provider 接收请求 → 反序列化 → 反射调用目标方法
-        ↓
-执行方法 → 构造 RpcResponse → 序列化返回
-        ↓
-Consumer 接收响应 → 反序列化 → 返回结果
+⸻
 
+2. SPI 扩展机制
 
----
+为什么要做？
+我不想让框架变成“JDK 序列化 + Zookeeper + Netty”的单一组合，而是希望用户能混搭，比如 Protobuf + Nacos + gRPC。
 
-## 🛠️ 技术栈
+支持自定义的模块：
+	•	序列化器（Serializer）
+	•	注册中心（Registry）
+	•	网络服务器（Transport Server）
+	•	负载均衡器（LoadBalancer）
 
-组件	技术栈
-通信层	原生 HTTP
-注册中心	本地 Map 实现
-序列化	JDK 序列化
-动态代理	JDK Proxy
-方法调用	Java 反射
+示例：自定义序列化器
 
+@RpcSPI("protobuf")
+public class ProtobufSerializer implements Serializer {
+    @Override
+    public <T> byte[] serialize(T obj) {
+        // Protobuf 序列化逻辑
+    }
+    @Override
+    public <T> T deserialize(byte[] bytes, Class<T> clazz) {
+        // Protobuf 反序列化逻辑
+    }
+}
 
----
+💡 个人想法
+SPI 用“契约 + 动态加载”替代 if/else 分支，不依赖我更新，别人也能加功能，让框架更有生命力。
 
-## 🔧 待优化 / 可扩展方向
-	•	替换为 Netty 实现高性能通信
-	•	引入 Protobuf 序列化提高性能与跨语言能力
-	•	使用 Zookeeper / Nacos 实现注册中心
-	•	加入负载均衡、重试机制、熔断限流等特性
-	•	实现异步调用、超时控制、链路追踪等
+⸻
 
----
+3. 多序列化方式
 
-## 📄 License
+内置支持：
+	•	JDK：兼容性好，调试方便
+	•	JSON：可读性好，便于日志排查
+	•	Hessian：跨语言友好
+	•	Kryo：性能高，体积小
 
-本项目仅用于学习和研究目的，欢迎自由 Fork & 学习！
+可扩展：通过 SPI 接入 Protobuf、Avro、FST 等。
 
----
+💡 个人想法
+不同场景取舍不同：调试时 JSON 爽，追求极致性能时 Kryo 更合适。
 
-## 🙋‍♂️ 作者
-	•	👤 FF
-	•	📝 喜欢钻研底层、构建工具、分享技术
-	•	📬 有问题欢迎交流！
+⸻
+
+4. 自定义二进制协议
+
+Header（固定长度）：
+
+字段	长度	描述
+魔数(Magic)	2B	协议识别
+序号(SeqId)	8B	请求唯一 ID
+版本号(Version)	1B	协议版本
+响应类型(Type)	1B	请求 / 响应 / 异常 / 心跳
+序列化方式(Ser)	1B	JDK / JSON / Hessian / Kryo
+状态码(Code)	1B	成功 / 失败 / 异常
+消息体长度(BodyLen)	4B	Body 字节长度
+
+Body：序列化后的对象数据。
+
+💡 个人想法
+相比直接用 HTTP，自定义协议更轻量、可控、解析成本低。魔数和版本号放前面方便快速判断兼容性。
+
+⸻
+
+5. 粘包 / 拆包解决方案
+
+支持：
+	1.	消息体长度 + 消息体
+	2.	Vert.x RecordParser 分隔符方式
+	3.	消息体长度 + 固定长度方式
+
+💡 个人想法
+分隔符方案遇到二进制数据包含分隔符时会出问题，所以我更偏向长度字段方案。
+
+⸻
+
+6. 多网络服务器实现
+	•	Vert.x HTTP（响应式）
+	•	原生 HTTP（易调试）
+	•	Netty（高性能）
+
+💡 个人想法
+Vert.x 用来体验事件驱动和回压机制；Netty 则冲击性能极限；原生 HTTP 方便新人理解。
+
+⸻
+
+7. 负载均衡算法
+	•	随机（Random）
+	•	轮询（Round Robin）
+	•	一致性哈希（Consistent Hash）
+
+💡 个人想法
+一致性哈希在缓存场景特别香，我调了虚拟节点数量，让节点变动更平滑。
+
+⸻
+
+8. 注册中心
+	•	Etcd（强一致性，Raft 协议）
+	•	Zookeeper（成熟稳定）
+	•	可扩展接入 Nacos、Consul
+
+💡 个人想法
+我偏爱 Etcd 的强一致性和 API 直观性，但 Zookeeper 在国内更常用，所以两个都做了。
+
+⸻
+
+📖 总结
+
+这个项目对我来说，是一次完整的**“从零到可生产”工程实践**。
+它让我更理解：
+	•	为什么要搞 SPI、全局配置、协议头、拆包方案
+	•	哪些设计是为了性能
+	•	哪些是为了可维护性和扩展性
+
+最重要的一点
+它的设计就是为了“可玩”，能无痛接入 QUIC、Protobuf、Nacos，而不改核心代码，这就是我的初衷。
