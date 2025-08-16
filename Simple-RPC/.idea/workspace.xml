@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式">
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/registry/EtcdRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/registry/EtcdRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +169,7 @@
       <workItem from="1744198674607" duration="18761000" />
       <workItem from="1753581471857" duration="3408000" />
       <workItem from="1754568124695" duration="61198000" />
-      <workItem from="1755310013580" duration="3743000" />
+      <workItem from="1755310013580" duration="6197000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -228,7 +227,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755095643913</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案">
+      <option name="closed" value="true" />
+      <created>1755313988422</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1755313988422</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,6 +247,7 @@
     <MESSAGE value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
     <MESSAGE value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
     <MESSAGE value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
+    <MESSAGE value="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案" />
+    <option name="LAST_COMMIT_MESSAGE" value="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案" />
   </component>
 </project>
