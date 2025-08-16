@@ -4,17 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验">
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/FixedIntervalRetryStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/NoRetryStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategyFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategyKeys.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/custom/com.ff.fault.retry.RetryStrategy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.fault.retry.RetryStrategy" afterDir="false" />
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="框架优化，增加了重试机制：增加了不重试的默认机制，以及通过guava提供了固定间隔重试机制">
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/FailBackTolerantStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/FastFailTolerantStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/FastSafeTolerantStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/FileOverTolerantStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/TolerantStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/TolerantStrategyFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/tolerant/TolerantStrategyKeys.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/custom/com.ff.fault.tolerant.TolerantStrategy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.fault.tolerant.TolerantStrategy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/ConsistentHashLoadBalancer.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/ConsistentHashLoadBalancer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,29 +59,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ConsumerMain.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Debug&quot;,
-    &quot;Application.ProviderMain.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProtocolMessageTest.testEncodeAndDecode.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC/simple-rpc-core/src/main/resources/META-INF/rpc/custom&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ConsumerMain.executor": "Run",
+    "Application.Main (1).executor": "Run",
+    "Application.Main.executor": "Debug",
+    "Application.ProviderMain.executor": "Run",
+    "JUnit.ProtocolMessageTest.testEncodeAndDecode.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC/simple-rpc-core/src/main/resources/META-INF/rpc/system",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\IDEAProgram\FF-SimpleRPC\FF-SimpleRPC\Simple-RPC\simple-rpc-core\src\main\resources\META-INF\rpc\system" />
       <recent name="D:\IDEAProgram\FF-SimpleRPC\FF-SimpleRPC\Simple-RPC\simple-rpc-core\src\main\resources\META-INF\rpc\custom" />
     </key>
   </component>
@@ -178,7 +181,7 @@
       <workItem from="1744198674607" duration="18761000" />
       <workItem from="1753581471857" duration="3408000" />
       <workItem from="1754568124695" duration="61198000" />
-      <workItem from="1755310013580" duration="10977000" />
+      <workItem from="1755310013580" duration="15361000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -252,7 +255,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755318071546</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="框架优化，增加了重试机制：增加了不重试的默认机制，以及通过guava提供了固定间隔重试机制">
+      <option name="closed" value="true" />
+      <created>1755328183520</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1755328183520</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -266,6 +277,7 @@
     <MESSAGE value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
     <MESSAGE value="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案" />
     <MESSAGE value="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验" />
-    <option name="LAST_COMMIT_MESSAGE" value="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验" />
+    <MESSAGE value="框架优化，增加了重试机制：增加了不重试的默认机制，以及通过guava提供了固定间隔重试机制" />
+    <option name="LAST_COMMIT_MESSAGE" value="框架优化，增加了重试机制：增加了不重试的默认机制，以及通过guava提供了固定间隔重试机制" />
   </component>
 </project>

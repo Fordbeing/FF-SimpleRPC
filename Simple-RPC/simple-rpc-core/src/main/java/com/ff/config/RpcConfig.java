@@ -1,6 +1,7 @@
 package com.ff.config;
 
 import com.ff.fault.retry.RetryStrategyKeys;
+import com.ff.fault.tolerant.TolerantStrategyKeys;
 import com.ff.loadbalancer.LoadBalancerKeys;
 import com.ff.serializer.SerializerKeys;
 import com.ff.server.RpcServerModel;
@@ -57,5 +58,8 @@ public class RpcConfig {
 
     // 重试策略
     private String retryStrategy = RetryStrategyKeys.NO;
+
+    // 容错机制
+    private String tolerantStrategy = TolerantStrategyKeys.FAST_FAIL;
 
 }

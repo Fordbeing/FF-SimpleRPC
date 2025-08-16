@@ -1,0 +1,4 @@
+fastfail=com.ff.fault.tolerant.FastFailTolerantStrategy
+fastsafe=com.ff.fault.tolerant.FastSafeTolerantStrategy
+fastover=com.ff.fault.tolerant.FastOverTolerantStrategy
+fastback=com.ff.fault.tolerant.FailBackTolerantStrategy

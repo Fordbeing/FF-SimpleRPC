@@ -38,7 +38,8 @@ public class ConsistentHashLoadBalancer implements LoadBalancer {
         }
 
         // 获取调用请求的 hash 值
-        int hash = getHash(requestParams);
+        String key = (String) requestParams.get("methodName");
+        int hash = getHash(key);
 
         // 选择最接近且大于等于调用请求 hash 值的虚拟节点
         Map.Entry<Integer, ServiceMetaInfo> entry = virtualNodes.ceilingEntry(hash);

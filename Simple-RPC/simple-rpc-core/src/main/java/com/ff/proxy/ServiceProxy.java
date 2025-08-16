@@ -6,6 +6,8 @@ import com.ff.config.RpcConfig;
 import com.ff.constant.RpcConstant;
 import com.ff.fault.retry.RetryStrategy;
 import com.ff.fault.retry.RetryStrategyFactory;
+import com.ff.fault.tolerant.TolerantStrategy;
+import com.ff.fault.tolerant.TolerantStrategyFactory;
 import com.ff.loadbalancer.LoadBalancer;
 import com.ff.loadbalancer.LoadBalancerFactory;
 import com.ff.model.RpcRequest;
@@ -13,10 +15,6 @@ import com.ff.model.RpcResponse;
 import com.ff.model.ServiceMetaInfo;
 import com.ff.registry.Registry;
 import com.ff.registry.RegistryFactory;
-import com.ff.serializer.Serializer;
-import com.ff.serializer.SerializerFactory;
-import com.ff.server.RpcServer;
-import com.ff.server.RpcServerFactory;
 import com.ff.server.tcp.VertxTcpClient;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,6 +57,8 @@ public class ServiceProxy implements InvocationHandler {
             LoadBalancer instance = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
             Map<String, Object> requestParams = new HashMap<>();
             requestParams.put("methodName", request.getMethodName());
+            requestParams.put("services", services); // 用于服务容错
+            requestParams.put("request", request); // 用于服务容错使用
             ServiceMetaInfo serviceMetaInfoLoadBalancer = instance.select(requestParams, services);
 
             // 发送请求 serviceMetaInfoFirst.getServiceAddress() -> URL
@@ -74,14 +74,19 @@ public class ServiceProxy implements InvocationHandler {
                 );
                 return rpcResponse.getResult();
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException("调用失败！");
+                // 容错机制
+                TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(RpcApplication.getRpcConfig().getTolerantStrategy());
+                try {
+                    return tolerantStrategy.tolerant(requestParams, e);
+                } catch (Exception exception) {
+                    log.error(e.getMessage(), e);
+                    throw new RuntimeException("调用失败！");
+                }
             }
             // 反序列化
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 }
