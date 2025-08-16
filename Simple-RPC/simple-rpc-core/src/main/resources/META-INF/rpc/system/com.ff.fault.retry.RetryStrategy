@@ -1,0 +1,2 @@
+no=com.ff.fault.retry.NoRetryStrategy
+fixedInterval=com.ff.fault.retry.FixedIntervalRetryStrategy

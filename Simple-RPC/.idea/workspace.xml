@@ -4,9 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案">
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验">
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/FixedIntervalRetryStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/NoRetryStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategyFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/fault/retry/RetryStrategyKeys.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/custom/com.ff.fault.retry.RetryStrategy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.fault.retry.RetryStrategy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/server/tcp/VertxTcpClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +26,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -169,7 +178,7 @@
       <workItem from="1744198674607" duration="18761000" />
       <workItem from="1753581471857" duration="3408000" />
       <workItem from="1754568124695" duration="61198000" />
-      <workItem from="1755310013580" duration="6197000" />
+      <workItem from="1755310013580" duration="10977000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -235,7 +244,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755313988422</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验">
+      <option name="closed" value="true" />
+      <created>1755318071546</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1755318071546</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,6 +265,7 @@
     <MESSAGE value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
     <MESSAGE value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
     <MESSAGE value="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案" />
-    <option name="LAST_COMMIT_MESSAGE" value="注册中心优化：采用etcd自动续期机制，手写的心跳检测作为兜底方案" />
+    <MESSAGE value="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验" />
+    <option name="LAST_COMMIT_MESSAGE" value="消费者消费优化，优化高并发下，消费者获取错误响应的问题，通过requestId进行校验" />
   </component>
 </project>

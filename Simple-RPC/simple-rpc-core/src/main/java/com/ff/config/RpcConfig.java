@@ -1,5 +1,6 @@
 package com.ff.config;
 
+import com.ff.fault.retry.RetryStrategyKeys;
 import com.ff.loadbalancer.LoadBalancerKeys;
 import com.ff.serializer.SerializerKeys;
 import com.ff.server.RpcServerModel;
@@ -54,5 +55,7 @@ public class RpcConfig {
     // 负载均衡配置
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
 
+    // 重试策略
+    private String retryStrategy = RetryStrategyKeys.NO;
 
 }
