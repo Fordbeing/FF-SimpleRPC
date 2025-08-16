@@ -9,9 +9,12 @@ import com.ff.config.RegistryConfig;
 import com.ff.model.ServiceMetaInfo;
 import io.etcd.jetcd.*;
 import io.etcd.jetcd.lease.LeaseGrantResponse;
+import io.etcd.jetcd.lease.LeaseKeepAliveResponse;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.support.CloseableClient;
 import io.etcd.jetcd.watch.WatchEvent;
+import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -52,6 +55,8 @@ public class EtcdRegistry implements Registry {
     // etcd KV 操作客户端
     private KV kvClient;
 
+    private CloseableClient keepAliveClient;
+
     /**
      * etcd 中所有服务注册的根路径
      */
@@ -78,31 +83,46 @@ public class EtcdRegistry implements Registry {
         }
     }
 
-    /**
-     * 注册服务到 etcd
-     *
-     * @param serviceMetaInfo 服务的元信息
-     */
     @Override
     public void registry(ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException, TimeoutException {
         Lease leaseClient = client.getLeaseClient();
-        // 创建一个30秒的租约，用于实现服务临时性，防止宕机后节点长期存在
-        long leaseId = leaseClient.grant(3000).get().getID();
+        // 创建一个 30 秒的租约
+        long leaseId = leaseClient.grant(30).get().getID();
 
-        // 拼接 etcd 中的服务键名 - key
+        // 拼接 etcd 中的服务键名
         String registryKey = ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
         ByteSequence key = ByteSequence.from(registryKey, StandardCharsets.UTF_8);
 
-        // 将服务信息序列化为 JSON 格式 - value
+        // 将服务信息序列化为 JSON 格式
         ByteSequence value = ByteSequence.from(JSONUtil.toJsonStr(serviceMetaInfo), StandardCharsets.UTF_8);
 
         // 使用租约写入 etcd，使服务注册信息具有过期时间
         PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
         kvClient.put(key, value, putOption).get();
 
-        // 注册成功之后,需要将当前节点信息写入本地
+        // 启动自动续租
+        leaseClient.keepAlive(leaseId, new StreamObserver<LeaseKeepAliveResponse>() {
+            @Override
+            public void onNext(LeaseKeepAliveResponse response) {
+                log.debug("KeepAlive 成功, leaseId={}, TTL={}",
+                        response.getID(), response.getTTL());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                log.error("KeepAlive 出错, leaseId={}", leaseId, t);
+            }
+
+            @Override
+            public void onCompleted() {
+                log.info("KeepAlive 完成, leaseId={}", leaseId);
+            }
+        });
+
+        // 注册成功后，把当前节点加入本地集合
         localRegistryNodeKeySet.add(registryKey);
     }
+
 
     /**
      * 根据服务 key 获取该服务下的所有服务实例信息
@@ -161,67 +181,45 @@ public class EtcdRegistry implements Registry {
         localRegistryNodeKeySet.remove(registryKey);
     }
 
-    /**
-     * 销毁注册中心，关闭连接
-     */
     @Override
     public void destroy() {
-        log.error("注册中心销毁！");
-
-        for (String key : localRegistryNodeKeySet) {
-            try {
-                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8));
-            } catch (Exception e) {
-                log.error("{} 节点下线失败！", key, e);
-                throw new RuntimeException(key + " 节点下线失败！");
-
-            }
+        if (keepAliveClient != null) {
+            keepAliveClient.close();
         }
-
         if (kvClient != null) {
-            kvClient.close(); // 关闭 KV 客户端
+            kvClient.close();
         }
         if (client != null) {
-            client.close(); // 关闭 etcd 客户端
+            client.close();
         }
     }
 
+
     @Override
     public void heartbeat() {
-        // 定制续期时间 10秒
-        CronUtil.schedule("*/10 * * * * *", new Task() {
+        // 兜底检测
+        CronUtil.schedule("*/30 * * * * *", new Task() {
             @Override
             public void execute() {
                 for (String registryKey : localRegistryNodeKeySet) {
                     try {
-                        List<KeyValue> keyValues = kvClient.get(ByteSequence.from(registryKey, StandardCharsets.UTF_8))
-                                .get().getKvs();
+                        List<KeyValue> keyValues = kvClient.get(
+                                ByteSequence.from(registryKey, StandardCharsets.UTF_8)).get().getKvs();
                         if (CollUtil.isEmpty(keyValues)) {
-                            Thread.sleep(5000);
-                            // 进行重试
-                            keyValues = kvClient.get(ByteSequence.from(registryKey, StandardCharsets.UTF_8))
-                                    .get().getKvs();
-                            if (CollUtil.isEmpty(keyValues)) {
-                                log.error(registryKey + " 节点已过期！重启节点才能重新注册！");
-                                continue;
-                            }
+                            log.error("检测到 {} 已过期，需要重新注册！", registryKey);
+                            // TODO: 可以触发告警 或 自动尝试重新注册
                         }
-                        String value = keyValues.get(0).getValue().toString(StandardCharsets.UTF_8);
-                        ServiceMetaInfo serviceMetaInfo = JSONUtil.toBean(value, ServiceMetaInfo.class);
-                        // 进行续约
-                        registry(serviceMetaInfo);
                     } catch (Exception e) {
-                        localRegistryNodeKeySet.remove(registryKey);
-                        log.error("续签失败，key:{}", registryKey, e);
+                        log.error("心跳检测异常，key:{}", registryKey, e);
                     }
                 }
             }
         });
 
-        // 秒级续约
         CronUtil.setMatchSecond(true);
         CronUtil.start();
     }
+
 
     @Override
     public void watch(String serviceNodeKey) {

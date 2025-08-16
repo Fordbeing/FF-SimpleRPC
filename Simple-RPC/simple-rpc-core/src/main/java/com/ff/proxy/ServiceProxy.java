@@ -27,9 +27,6 @@ import java.util.Map;
 @Slf4j
 public class ServiceProxy implements InvocationHandler {
 
-    final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
-    final RpcServer rpcServer = RpcServerFactory.getInstance(RpcApplication.getRpcConfig().getRpcServer());
-
     // 通过 JDK代理 实现方法拦截，JDK 代理只能够拦截实现了接口的类，也就是实现了接口的类就要经过JDK代理
     // invoke 就是拦截之后具体的做法， 拦截之后就会把调用的接口、方法、类型参数、参数值给传过来，刚好符合我们的需求
     @Override
@@ -45,8 +42,6 @@ public class ServiceProxy implements InvocationHandler {
                 .build();
 
         try {
-            byte[] bytes = serializer.serialize(request); // 将请求序列化
-
             RpcConfig rpcConfig = RpcApplication.getRpcConfig();
             Registry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistry());
 
@@ -54,7 +49,7 @@ public class ServiceProxy implements InvocationHandler {
             serviceMetaInfo.setServiceName(method.getDeclaringClass().getName());
             serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
             List<ServiceMetaInfo> services = registry.getServices(serviceMetaInfo.getServiceKey());
-            if(CollUtil.isEmpty(services)){
+            if (CollUtil.isEmpty(services)) {
                 log.info("注册中心：{}，无法找到key：{} 的服务地址", method.getDeclaringClass().getName(), serviceMetaInfo.getServiceKey());
                 throw new RuntimeException("暂无服务地址");
             }
@@ -71,8 +66,7 @@ public class ServiceProxy implements InvocationHandler {
             // 反序列化
             RpcResponse rpcResponse = VertxTcpClient.sendPost(request, serviceMetaInfoLoadBalancer);
             return rpcResponse.getResult();
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

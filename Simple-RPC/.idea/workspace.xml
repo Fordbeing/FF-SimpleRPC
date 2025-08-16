@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等">
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/ConsistentHashLoadBalancer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancerFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/LoadBalancerKeys.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/RandomLoadBalancer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/loadbalancer/RoundRobinLoadBalancer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/custom/com.ff.loadbalancer.LoadBalancer" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/resources/META-INF/rpc/system/com.ff.loadbalancer.LoadBalancer" afterDir="false" />
+    <list default="true" id="70286ac2-d4ce-4631-97cb-bf9eef702375" name="Changes" comment="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/config/RpcConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/proxy/ServiceProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/registry/EtcdRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/simple-rpc-core/src/main/java/com/ff/registry/EtcdRegistry.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,27 +49,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ConsumerMain.executor": "Run",
-    "Application.Main (1).executor": "Run",
-    "Application.Main.executor": "Debug",
-    "Application.ProviderMain.executor": "Run",
-    "JUnit.ProtocolMessageTest.testEncodeAndDecode.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC/simple-rpc-core/src/main/resources/META-INF/rpc/custom",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ConsumerMain.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Debug&quot;,
+    &quot;Application.ProviderMain.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ProtocolMessageTest.testEncodeAndDecode.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/IDEAProgram/FF-SimpleRPC/FF-SimpleRPC/Simple-RPC/simple-rpc-core/src/main/resources/META-INF/rpc/custom&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\IDEAProgram\FF-SimpleRPC\FF-SimpleRPC\Simple-RPC\simple-rpc-core\src\main\resources\META-INF\rpc\custom" />
@@ -177,7 +169,8 @@
       <workItem from="1744118788611" duration="2779000" />
       <workItem from="1744198674607" duration="18761000" />
       <workItem from="1753581471857" duration="3408000" />
-      <workItem from="1754568124695" duration="58447000" />
+      <workItem from="1754568124695" duration="61198000" />
+      <workItem from="1755310013580" duration="3743000" />
     </task>
     <task id="LOCAL-00001" summary="commit simple-easy module">
       <option name="closed" value="true" />
@@ -227,7 +220,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754834777270</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式">
+      <option name="closed" value="true" />
+      <created>1755095643913</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1755095643913</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -238,6 +239,7 @@
     <MESSAGE value="修改注释，更新文档" />
     <MESSAGE value="优化消费者服务缓存只能保存一个服务实例的弊端，通过concurrentHashMap进行保存，支持多个服务进行缓存" />
     <MESSAGE value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
-    <option name="LAST_COMMIT_MESSAGE" value="由于http协议的头部过多无用信息，因此基于tcp连接设计一套自己的rpc协议，加快数据传输，设计编码和解码等" />
+    <MESSAGE value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加负载均衡算法：提供了随机、轮询、一致性哈希算法等负载均衡模式" />
   </component>
 </project>
