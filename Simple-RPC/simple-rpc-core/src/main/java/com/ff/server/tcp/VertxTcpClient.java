@@ -88,8 +88,8 @@ public class VertxTcpClient {
                         pendingRequests.remove(requestId);
                     }
 
-                    // 处理响应
-                    socket.handler(buffer -> {
+                    // 处理响应,解决响应时的粘包拆包问题
+                    TcpBufferHandlerWrapper tcpBufferHandlerWrapper = new TcpBufferHandlerWrapper(buffer ->{
                         try {
                             ProtocolMessage<RpcResponse> rpcResponseProtocolMessage =
                                     (ProtocolMessage<RpcResponse>) ProtocolMessageDecoder.decode(buffer);
@@ -104,6 +104,7 @@ public class VertxTcpClient {
                             log.error("协议消息解码错误", e);
                         }
                     });
+                    socket.handler(tcpBufferHandlerWrapper);
                 });
 
         return responseFuture.get(timeoutSeconds + 1, TimeUnit.SECONDS); // 阻塞等待
